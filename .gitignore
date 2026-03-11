@@ -1,0 +1,11 @@
+### macOS ###
+# General
+.DS_Store
+
+# template output pdf
+template/*.pdf
+
+# IDE
+.zed
+.vscode
+.idea
