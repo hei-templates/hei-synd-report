@@ -2,7 +2,6 @@
 // Description: Report Typst Template
 // Author     : Silvan Zahno
 //
-#import "helpers.typ": *
 #import "pages-report.typ": *
 
 #let report(
@@ -144,14 +143,14 @@
         [#v(1.2cm)#doc.logos.header]
       )
       #if doc.logos.header != none {[
-        #line(start: (-0.5em, 0cm), length: 85%, stroke: 0.5pt)
+        #line(start: (-0.5em, 0cm), length: 85%, stroke: (paint:gradient.linear(luma(0), luma(255)), thickness: 0.5pt, cap:"round"))
       ]} else {[
-        #line(start: (-0.5em, 0cm), length: 100%, stroke: 0.5pt)
+        #line(start: (-0.5em, 0cm), length: 100%, stroke: (paint:gradient.linear(luma(0), luma(255)), thickness: 0.5pt, cap:"round"))
       ]}
       ]),
     footer: context( if here().page() >=2 [
         #set text(small)
-        #line(start: (85%, 0cm), length: 15%, stroke: 0.5pt)
+        #line(start: (85%, 0cm), length: 15%, stroke: (paint:gradient.linear(luma(255), luma(0)), thickness: 0.5pt, cap:"round"))
         #enumerating-emails(names:doc.authors.map(a => a.abbr), emails:doc.authors.map(a => a.email)) #if doc.authors.first().abbr != none {[/]} #date.display("[year]") #h(1fr) #context counter(page).display("1 / 1", both: true)
     ]),
   )
@@ -190,18 +189,19 @@
   }
 
   // link color
-  //show link: it => text(fill:blue, underline(it))
-  //show link: it => text(fill:hei-blue, it)
-  show link: it => text(fill:gray-80, it)
+  show link: it => text(fill:hei-pink, it)
+  //show link: it => text(fill:gray-80, it)
 
+  // code blocks
+  show raw: set text(
+    font: (
+    "Iosevka",
+    "Fira Code",
+    "JetBrains Mono",
+    "DejaVu Sans Mono",
+    ),
+  fallback: true,)
   show raw.where(block: false): set text(weight: "semibold")
-  //show raw.where(block: false): it => {
-  //  highlight(
-  //    fill:code-bg,
-  //    top-edge: "ascender",
-  //    bottom-edge: "bounds",
-  //    extent:1pt, it)
-  //}
   show raw.where(block: true): set text(size: tiny)
   show raw.where(block: true): it => {
     block(
@@ -217,7 +217,7 @@
   // Captions
   set figure(numbering: "1", supplement: get-supplement)
   set figure.caption(separator: " - ") // With a nice separator
-  set math.equation(numbering: "(1)", supplement: i18n("equation-name"))
+  set math.equation(numbering: "(1)", supplement: i18n("equation-name", lang: option.lang))
 
   show: word-count
 
@@ -233,11 +233,11 @@
   toc(
     tableof: tableof,
     titles: (
-      toc: i18n("toc-title"),
-      tot: i18n("tot-title"),
-      tof: i18n("tof-title"),
-      tol: i18n("tol-title"),
-      toe: i18n("toe-title"),
+      toc: i18n("toc-title", lang: option.lang),
+      tot: i18n("tot-title", lang: option.lang),
+      tof: i18n("tof-title", lang: option.lang),
+      tol: i18n("tol-title", lang: option.lang),
+      toe: i18n("toe-title", lang: option.lang),
     ),
     before: <sec:glossary>
   )

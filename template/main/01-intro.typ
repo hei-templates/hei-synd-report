@@ -18,7 +18,7 @@
 
 #infobox()[Welcome to the template’s introductory chapter! Instead of boring you with lorem ipsum, here’s a quick guide to what you can do in Typst and, more specifically, in this template.
 
-  Need more? Check out the #link("https://github.com/hei-templates/hei-synd-report/blob/main/guide-to-typst.pdf")[Guide to Typst].]
+  Need more? Check out the #link("https://github.com/hei-templates/hei-synd-thesis/blob/main/guide-to-typst.pdf")[Guide to Typst].]
 
 == Basic markup
 

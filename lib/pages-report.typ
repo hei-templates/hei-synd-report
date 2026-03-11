@@ -2,7 +2,7 @@
 // Description: Title page for the script template
 // Author     : Silvan Zahno
 //
-#import "helpers.typ": *
+#import "@preview/hei-synd-thesis:0.3.1": *
 
 #let page-title-report(
   type: none,
@@ -22,19 +22,21 @@
         name        : none,
         abbr        : none,
         email       : none,
-        url         : none,
       ),
     ),
     school: (
-      name        : none,
-      major       : none,
-      orientation : none,
-      url         : none,
+      name            : none,
+      url             : none,
+      major           : none,
+      major_url       : none,
+      orientation     : none,
+      orientation_url : none,
     ),
     course: (
       name     : none,
       url      : none,
       prof     : none,
+      email    : none,
       class    : none,
       semester : none,
     ),
@@ -77,28 +79,28 @@
 
   set text(normal)
   if doc.school.name != none or doc.school.url != none {[*#safe-link(url:doc.school.url, name:doc.school.name)* \ ]}
-  if doc.school.major != none {[#safe-link(url:doc.school.url, name:doc.school.major)]}
-  if ((doc.school.major != none and doc.school.orientation != none) or doc.school.url != none) {" - "}
-  if doc.school.orientation != none or doc.school.url!= none {[#safe-link(url:doc.school.url, name:doc.school.orientation)]}
+  if doc.school.major != none {[#safe-link(url:doc.school.major_url, name:doc.school.major)]}
+  if ((doc.school.major != none and doc.school.orientation != none) or doc.school.url != none) {" " + $circle.filled.tiny$ + " "}
+  if doc.school.orientation != none or doc.school.url!= none {[#safe-link(url:doc.school.orientation_url, name:doc.school.orientation)]}
   if (doc.school.major != none or doc.school.orientation != none) {[\ ]}
 
   if doc.course.name != none or doc.course.url != none {[#safe-link(url:doc.course.url, name:doc.course.name)]}
-  if ((doc.course.name != none and doc.course.prof != none) or doc.course.url != none) {" - "}
-  if doc.course.prof != none or doc.course.url != none {[#safe-link(url:doc.course.url, name:doc.course.prof)]}
+  if ((doc.course.name != none and doc.course.prof != none) or doc.course.url != none) {" " + $circle.filled.tiny$ + " "}
+  if doc.course.prof != none or doc.course.url != none {[#safe-link(url:"mailto:"+doc.course.email, name:doc.course.prof)]}
   if (doc.course.prof != none or doc.course.url != none) {[\ ]}
 
   if doc.course.semester != none {[#doc.course.semester]}
-  if (doc.course.semester != none and doc.course.class != none) {" - "}
+  if (doc.course.semester != none and doc.course.class != none) {" " + $circle.filled.tiny$ + " "}
   if doc.course.class != none {[#doc.course.class]}
   if (doc.course.semester != none or doc.course.class != none) {[\ ]}
 
-  line(length: 100%, stroke: 0.5pt)
+  line(length: 100%, stroke: (paint:gradient.linear(luma(0), luma(255)), thickness: 1pt, cap:"round"))
 
   set text(large)
   if doc.authors.first().name != none {[*#enumerating-emails(names:doc.authors.map(a => a.name), emails:doc.authors.map(a => a.email))*\ ]}
 
-  if date != none {[#date.display("[day].[month].[year]") - ]}
+  if date != none {[#date.display("[day].[month].[year]") $circle.filled.tiny$ ]}
   if doc.version != none {[#doc.version]}
-  if (doc.version != none and type != none) {" - "}
+  if (doc.version != none and type != none) {" " + $circle.filled.tiny$ + " "}
   if type != none {[#type]}
 }
