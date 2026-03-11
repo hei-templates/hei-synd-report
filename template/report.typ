@@ -1,4 +1,3 @@
-#import "@preview/hei-synd-report:0.1.1": *
 #import "/metadata.typ": *
 #import "/tail/bibliography.typ": *
 #import "/tail/glossary.typ": *
@@ -25,25 +24,24 @@
 #include "/main/05-validation.typ"
 #include "/main/06-conclusion.typ"
 
-#heading(numbering:none, outlined: false)[] <sec:end>
+//#heading(numbering:none, outlined: false)[] <sec:end>
 
 //-------------------------------------
 // Glossary
 //
-#make_glossary(gloss:gloss, title:i18n("gloss-title"))
+#make_glossary(gloss:gloss, title:i18n("gloss-title", lang: option.lang))
 
 //-------------------------------------
 // Bibliography
 //
-#make_bibliography(bib:bib, title:i18n("bib-title"))
+#make_bibliography(bib:bib, title:i18n("bib-title", lang: option.lang))
+
 
 //-------------------------------------
 // Appendix
 //
 #if appendix == true {[
-  #pagebreak()
   #counter(heading).update(0)
   #set heading(numbering:"A")
-  = #i18n("appendix-title") <sec:appendix>
-  //#include "tail/a-appendix.typ"
+  #include "/tail/a-appendix.typ"
 ]}

@@ -1,3 +1,6 @@
+#import "@preview/hei-synd-thesis:0.3.1": *
+#import "@preview/hei-synd-report:0.2.0": *
+
 //-------------------------------------
 // Document options
 //
@@ -11,16 +14,14 @@
 //-------------------------------------
 // Optional generate titlepage image
 //
-#import "@preview/fractusist:0.1.1":*  // only for the generated images
-
+#import "@preview/fractusist:0.3.2":*  // only for the generated images
 #let titlepage_logo= dragon-curve(
   12,
-  step-size: 10,
-  stroke-style: stroke(
-    //paint: gradient.linear(..color.map.rocket, angle: 135deg),
+  step-size: 4,
+  stroke: stroke(
     paint: gradient.radial(..color.map.rocket),
-    thickness: 3pt, join: "round"),
-  height: 10cm,
+    thickness: 1pt, join: "round"
+  ),
 )
 
 //-------------------------------------

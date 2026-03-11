@@ -1,4 +1,5 @@
-#import "@preview/hei-synd-report:0.1.1": *
+#import "/metadata.typ": *
+#pagebreak()
 
 #let make_bibliography(
   bib:(
@@ -6,7 +7,7 @@
     path: "/tail/bibliography.bib",
     style: "ieee", //"apa", "chicago-author-date", "chicago-notes", "mla"
   ),
-  title: "Bibliography",
+  title: i18n("bib-title", lang: option.lang),
 ) = {[
   #if bib.display == true {[
     #pagebreak()

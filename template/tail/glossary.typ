@@ -1,4 +1,4 @@
-#import "@preview/hei-synd-report:0.1.1": *
+#import "/metadata.typ": *
 
 #let entry-list = (
   (
@@ -31,7 +31,7 @@
 
 #let make_glossary(
   gloss:true,
-  title: i18n("gloss-title"),
+  title: i18n("gloss-title", lang: option.lang),
 ) = {[
   #if gloss == true {[
     #pagebreak()
