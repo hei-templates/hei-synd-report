@@ -14,17 +14,30 @@ project_name  := file_stem(justfile_directory())
 project_tag   := "0.1.1"
 
 typst_version := "typst -V"
-typst_github  := "https://github.com/typst/typst --tag v0.13.0"
+typst_github  := "https://github.com/typst/typst --tag v0.14.2"
 
-option_script := "change-options.bash"
 template_dir  := join(justfile_directory(), "template")
-scripts_dir   := join(justfile_directory(), "lib/scripts")
 doc_name      := "report"
 type          := "draft"
 lang          := "en"
 
-local_dir      := "~/Library/Application\\ Support/typst/packages/local"
-preview_dir    := "~/work/repo/edu/template/packages/packages/preview"
+local_dir := if os() == "macos" {
+  "~/Library/Application\\ Support/typst/packages/local"
+} else {
+  "~/.local/share/typst/packages/local"
+}
+
+preview_dir := if os() == "macos" {
+  "~/Library/Caches/typst/packages/preview"
+} else {
+  "~/.cache/typst/packages/preview"
+}
+
+release_dir := if os() == "macos" {
+"~/Library/Application\\ Support/typst/packages/preview"
+} else {
+"~/.local/share/typst/packages/preview"
+}
 
 ##################################################
 # COMMANDS
@@ -55,36 +68,117 @@ preview_dir    := "~/work/repo/edu/template/packages/packages/preview"
   echo "Install typst"
   brew install typst
 
-# install the template locally as local package
+# create or update a symlink to the current project root
+[linux]
 [macos]
-@copy-local:
-  echo "Install template locally as local"
-  mkdir -p {{local_dir}}/{{project_name}}/{{project_tag}}
-  cp -r ./* {{local_dir}}/{{project_name}}/{{project_tag}}
+@link path:
+  echo "Link template in {{path}} to current project root"
+  echo "  {{path}}/{{project_tag}} -> {{project_dir}}"
+  mkdir -p {{preview_dir}}/{{project_name}}
+  rm -rf {{path}}/{{project_tag}}
+  ln -s {{project_dir}} {{path}}/{{project_tag}}
 
-# install the template locally as preview package
+# remove symlink/folder for current project version
+[linux]
 [macos]
-@copy-preview:
-  echo "Install template locally as preview"
-  mkdir -p {{preview_dir}}/{{project_name}}/{{project_tag}}
-  cp -r ./* {{preview_dir}}/{{project_name}}/{{project_tag}}
+@unlink path:
+  echo "Remove template link/folder from {{path}}"
+  echo "  {{path}}/{{project_tag}}"
+  rm -rf {{path}}/{{project_tag}}
 
+# create or update a symlink in preview package path to the current project root
+[linux]
+[macos]
+@link-preview: (link preview_dir / project_name)
 
-# generate changelog
-@changelog:
-  git-cliff
+# create or update a symlink in local package path to the current project root
+[linux]
+[macos]
+@link-local: (link local_dir / project_name)
 
-# generate changelog for the unreleased specified tag
-@changelog-unreleased:
-  git-cliff -unreleased --tag {{project_tag}}
+# create or update symlinks preview and local to the current project root
+[linux]
+[macos]
+@link-all: link-preview link-local
+
+# remove preview symlink/folder for current project version
+[linux]
+[macos]
+@unlink-preview: (unlink preview_dir / project_name)
+
+# remove local symlink/folder for current project version
+[linux]
+[macos]
+@unlink-local: (unlink local_dir / project_name)
+
+# remove all symlinks preview and local for current project version
+[linux]
+[macos]
+@unlink-all: unlink-preview unlink-local
+
+# check if a symlink exists at the given path and where it points
+[linux]
+[macos]
+check-link path:
+  #!/usr/bin/env sh
+  echo "Check link for {{path}}"
+  expanded_path=$(eval echo "{{path}}")
+  if [ -L "$expanded_path" ]; then
+    target=$(readlink "$expanded_path")
+    echo "  linked -> $target"
+  elif [ -d "$expanded_path" ]; then
+    echo "  exists (directory, not a symlink)"
+  else
+    echo "  unlinked"
+  fi
+
+# check if both preview and local symlinks exist
+[linux]
+[macos]
+@check-links:
+  just check-link {{local_dir}}/{{project_name}}/{{project_tag}}
+  just check-link {{preview_dir}}/{{project_name}}/{{project_tag}}
+
+# install the template as release package
+[macos]
+@copy-release:
+  echo "Install template as release package"
+  echo "  {{release_dir}}/{{project_name}}/{{project_tag}}"
+  mkdir -p {{release_dir}}/{{project_name}}/{{project_tag}}
+  cp -r ./* {{release_dir}}/{{project_name}}/{{project_tag}}
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/sample.png
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/sample.svg
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/justfile
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/cliff.toml
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/template/*.pdf
+  sed -i '' '/!\[\](https:\/\/tianji\.zahno\.dev\/telemetry/d' {{release_dir}}/{{project_name}}/{{project_tag}}/README.md
+
+[linux]
+@copy-release:
+  echo "Install template as release package"
+  echo "  {{release_dir}}/{{project_name}}/{{project_tag}}"
+  mkdir -p {{release_dir}}/{{project_name}}/{{project_tag}}
+  cp -r ./* {{release_dir}}/{{project_name}}/{{project_tag}}
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/sample.png
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/sample.svg
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/justfile
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/cliff.toml
+  rm -f {{release_dir}}/{{project_name}}/{{project_tag}}/template/*.pdf
+  sed -i '/!\[\](https:\/\/tianji\.zahno\.dev\/telemetry/d' {{release_dir}}/{{project_name}}/{{project_tag}}/README.md
 
 # generate changelog and tag for the current release
-@changelog-release:
-  git-cliff --tag {{project_tag}}
+@changelog-unreleased:
+  git-cliff --unreleased --tag  {{project_tag}} -o CHANGELOG.md
+
+# generate changelog for latest version bump only. Append to current file
+@changelog-latest:
+  git cliff --unreleased --tag {{project_tag}} --prepend CHANGELOG.md
 
 # watch a typ file for continuous incremental build
-watch file_name=doc_name:
-  typst w {{template_dir}}/{{file_name}}.typ
+watch file_name=doc_name type=type lang=lang:
+  typst c {{template_dir}}/{{file_name}}.typ --input type={{type}} --input lang={{lang}}
+  just open {{file_name}}
+  typst w {{template_dir}}/{{file_name}}.typ --input type={{type}} --input lang={{lang}}
 
 # open pdf
 open file_name=doc_name:
@@ -93,10 +187,9 @@ open file_name=doc_name:
 # build, rename and copy a typ file to a pdf
 @pdf file_name=doc_name type=type lang=lang:
   echo "--------------------------------------------------"
-  echo "-- Generate {{file_name}}.pdf of type {{type}}"
+  echo "-- Generate {{file_name}}.pdf of type {{type}} in language {{lang}}"
   echo "--"
-  bash {{scripts_dir}}/{{option_script}} -t {{type}} -l {{lang}}
-  typst c {{template_dir}}/{{file_name}}.typ
+  typst c {{template_dir}}/{{file_name}}.typ  --input type={{type}} --input lang={{lang}}
   mv {{template_dir}}/{{file_name}}.pdf {{template_dir}}/{{file_name}}-{{lang}}-{{type}}.pdf
   just clean
 
@@ -107,6 +200,10 @@ open file_name=doc_name:
   echo "--"
   just pdf {{file_name}} draft en
   just pdf {{file_name}} final en
+  just pdf {{file_name}} draft de
+  just pdf {{file_name}} final de
+  just pdf {{file_name}} draft fr
+  just pdf {{file_name}} final fr
 
 # cleanup intermediate files
 [linux]
@@ -130,3 +227,19 @@ open file_name=doc_name:
   del /q /s template\metadata.pdf 2>nul
   del /q /s template\main\*.pdf 2>nul
   del /q /s template\tail\*.pdf 2>nul
+
+# update hei-synd-thesis import version in all .typ files
+[linux]
+set-version version:
+  #!/usr/bin/env sh
+  echo "Updating hei-synd-thesis version to {{version}}"
+  find {{project_dir}} -name "*.typ" -exec sed -i 's/@preview\/hei-synd-thesis:[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/@preview\/hei-synd-thesis:{{version}}/g' {} \;
+  echo "Done"
+
+# update hei-synd-thesis import version in all .typ files
+[macos]
+set-version version:
+  #!/usr/bin/env sh
+  echo "Updating hei-synd-thesis version to {{version}}"
+  find {{project_dir}} -name "*.typ" -exec sed -i '' 's/@preview\/hei-synd-thesis:[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/@preview\/hei-synd-thesis:{{version}}/g' {} \;
+  echo "Done"
