@@ -1,0 +1,122 @@
+name: release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  get-version:
+    uses: ./.github/workflows/_reusable-get-version.yml
+
+  check-version:
+    needs: [get-version]
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if version needs release
+        id: check
+        env:
+          CURRENT_VERSION: ${{ needs.get-version.outputs.version }}
+        run: |
+          echo "Current version: $CURRENT_VERSION"
+
+          if git rev-parse "$CURRENT_VERSION" >/dev/null 2>&1; then
+            echo "Tag $CURRENT_VERSION already exists - no release needed"
+            echo "should_release=false" >> $GITHUB_OUTPUT
+          else
+            echo "Tag $CURRENT_VERSION does not exist - will create release"
+            echo "should_release=true" >> $GITHUB_OUTPUT
+          fi
+
+  create-tag:
+    needs: [get-version, check-version]
+    if: needs.check-version.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create and push tag
+        if: ${{ !env.ACT }}
+        env:
+          RELEASE_VERSION: ${{ needs.get-version.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$RELEASE_VERSION" -m "Release $RELEASE_VERSION"
+          git push origin "$RELEASE_VERSION"
+
+  build:
+    needs: [get-version, check-version, create-tag]
+    if: needs.check-version.outputs.should_release == 'true'
+    uses: ./.github/workflows/_reusable-build.yml
+    with:
+      release_version: ${{ needs.get-version.outputs.version }}
+      build_matrix: '{"lang":["en","fr","de"],"type":["draft","final"]}'
+
+  changelog:
+    needs: [get-version, check-version, create-tag]
+    if: needs.check-version.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --strip all --latest
+        env:
+          OUTPUT: CHANGELOG.md
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Upload Changelog
+        if: ${{ !env.ACT }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: CHANGELOG.md
+
+  release:
+    needs: [get-version, check-version, build, changelog]
+    if: needs.check-version.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        if: ${{ !env.ACT }}
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Move build artifacts
+        if: ${{ !env.ACT }}
+        run: |
+          mkdir -p output
+          find artifacts -name "thesis*.pdf" -type f -exec cp {} output/ \;
+
+      - name: Create GitHub Release
+        if: ${{ !env.ACT }}
+        uses: softprops/action-gh-release@v1
+        env:
+          RELEASE_VERSION: ${{ needs.get-version.outputs.version }}
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          name: "${{ env.RELEASE_VERSION }}"
+          body_path: artifacts/changelog/CHANGELOG.md
+          files: ./output/thesis*.pdf

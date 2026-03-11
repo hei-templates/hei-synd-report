@@ -1,0 +1,43 @@
+name: check
+
+on:
+  pull_request:
+
+jobs:
+
+  get-ref-version:
+    uses: ./.github/workflows/_reusable-get-version.yml
+
+  check-version:
+    needs: [get-ref-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check version consistency
+        env:
+          REF_VERSION: ${{ needs.get-ref-version.outputs.version }}
+        run: |
+          set -euo pipefail
+          TYPST_TOML=$(awk -F'"' '/^version *=/ {print $2; exit}' typst.toml)
+          JUSTFILE=$(awk -F'"' '/^project_tag/ {print $2; exit}' justfile)
+          README=$(grep -o '@preview/hei-synd-thesis:[0-9.]\+' README.md | head -n1 | awk -F: '{print $2}')
+          METADATA=$(grep -o '@preview/hei-synd-thesis:[0-9.]\+' template/metadata.typ | head -n1 | awk -F: '{print $2}')
+          echo "typst.toml: $TYPST_TOML"
+          echo "justfile:   $JUSTFILE"
+          echo "README.md:  $README"
+          echo "metadata:   $METADATA"
+          if [ "$REF_VERSION" != "$TYPST_TOML" ] || [ "$REF_VERSION" != "$JUSTFILE" ] || [ "$REF_VERSION" != "$README" ] || [ "$REF_VERSION" != "$METADATA" ]; then
+            echo "Version mismatch detected!"
+            exit 1
+          fi
+          echo "All versions match: $REF_VERSION"
+
+
+  build:
+    needs: [get-ref-version]
+    uses: ./.github/workflows/_reusable-build.yml
+    with:
+      release_version: ${{ needs.get-ref-version.outputs.version }}
+      build_matrix: '{"lang":["en"],"type":["draft"]}'
