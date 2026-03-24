@@ -56,6 +56,11 @@
     toe: false,
     maxdepth: 3,
   ),
+  fonts : (
+    text: "Libertinus Serif",
+    mono: "DejaVu Sans Mono",
+    math: "New Computer Modern Math",
+  ),
   body) = {
   // Sanitize inputs
   doc.title    = doc.at("title", default: none)
@@ -198,14 +203,7 @@
   //show link: it => text(fill:gray-80, it)
 
   // code blocks
-  show raw: set text(
-    font: (
-    "Iosevka",
-    "Fira Code",
-    "JetBrains Mono",
-    "DejaVu Sans Mono",
-    ),
-  fallback: true,)
+  show raw: set text(font: (fonts.mono), fallback: true)
   show raw.where(block: false): set text(weight: "semibold")
   show raw.where(block: true): set text(size: tiny)
   show raw.where(block: true): it => {

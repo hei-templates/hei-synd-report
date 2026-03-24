@@ -13,6 +13,7 @@
   date: date,
   display: display,
   tableof: tableof,
+  fonts: fonts,
 )
 
 //-------------------------------------

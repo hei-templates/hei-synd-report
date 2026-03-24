@@ -97,3 +97,9 @@
   path  : "/tail/bibliography.bib",
   style : "ieee", //"apa", "chicago-author-date", "chicago-notes", "mla"
 )
+
+#let fonts = (
+  text: "Libertinus Serif",
+  mono: "DejaVu Sans Mono",
+  math: "New Computer Modern Math",
+)
