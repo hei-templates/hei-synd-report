@@ -30,10 +30,10 @@
   subtitle : [_Typst Template Example_],
   url      : "https://synd.hevs.io",
   logos: (
-    tp_topleft  : image("resources/img/synd.svg", height: 1.2cm),
-    tp_topright : image("resources/img/hei.svg", height: 1.5cm),
+    tp_topleft  : image("resources/img/synd-it.svg", height: 1.3cm),
+    tp_topright : image("resources/img/hei.svg", height: 1.3cm),
     tp_main     : titlepage_logo,
-    header      : image("resources/img/project-logo.svg", width: 2.5cm),
+    header      : image("resources/img/project-logo.svg", width: 2.0cm),
   ),
   authors: (
     (
