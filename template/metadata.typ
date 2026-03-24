@@ -77,6 +77,10 @@
 //-------------------------------------
 // Settings
 //
+#let display = (
+  gradient: false,
+)
+
 #let tableof = (
   toc: true,
   tof: false,

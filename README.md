@@ -69,6 +69,7 @@ All metadata is optional, but it is recommended to fill in as much as possible. 
    | `doc.keywords`               | _list_ of _string_          | Keywords for the document                                                                           |
    | `doc.version`                | _content_                   | Version of the document                                                                             |
    | `date`                       | _datetime_                  | Date of the document (default: `datetime.today()`                                                   |
+   | `display.gradient`           | _boolean_                   | Enable line gradient fadeout (default: `false`                                                      |
    | `tableof`                    | _dictionary_                | Table of ... settings for the document                                                              |
    | `tableof.toc`                | _boolean_                   | Create table of contents (default: `true`)                                                          |
    | `tableof.tof`                | _boolean_                   | Create table of figures (default: `false`)                                                          |

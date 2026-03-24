@@ -44,6 +44,9 @@
     version  : "v0.1.0",
   ),
   date: datetime.today(),
+  display: (
+    gradient: false,
+  ),
 ) = {
   table(
     columns: (50%, 50%),
@@ -94,7 +97,11 @@
   if doc.course.class != none {[#doc.course.class]}
   if (doc.course.semester != none or doc.course.class != none) {[\ ]}
 
-  line(length: 100%, stroke: (paint:gradient.linear(luma(0), luma(255)), thickness: 1pt, cap:"round"))
+  if display.gradient {
+    line(length: 100%, stroke: (paint:gradient.linear(luma(0), luma(255)), thickness: 1pt, cap:"round"))
+  } else {
+    line(length: 100%, stroke: (paint:luma(0), thickness: 1pt, cap:"round"))
+  }
 
   set text(large)
   if doc.authors.first().name != none {[*#enumerating-emails(names:doc.authors.map(a => a.name), emails:doc.authors.map(a => a.email))*\ ]}

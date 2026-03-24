@@ -11,6 +11,7 @@
   option: option,
   doc: doc,
   date: date,
+  display: display,
   tableof: tableof,
 )
 

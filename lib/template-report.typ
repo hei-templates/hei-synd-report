@@ -45,6 +45,9 @@
     version  : "v0.1.0",
   ),
   date: datetime.today(),
+  display : (
+    gradient: false,
+  ),
   tableof : (
     toc: true,
     tof: false,
@@ -143,9 +146,17 @@
         [#v(1.2cm)#doc.logos.header]
       )
       #if doc.logos.header != none {[
-        #line(start: (-0.5em, 0cm), length: 85%, stroke: (paint:gradient.linear(luma(0), luma(255)), thickness: 0.5pt, cap:"round"))
+        #if display.gradient {[
+          #line(start: (-0.5em, 0cm), length: 85%, stroke: (paint:gradient.linear(luma(0), luma(255)), thickness: 0.5pt, cap:"round"))
+        ]} else {[
+          #line(start: (-0.5em, 0cm), length: 85%, stroke: (paint:luma(255), thickness: 0.5pt, cap:"round"))
+        ]}
       ]} else {[
-        #line(start: (-0.5em, 0cm), length: 100%, stroke: (paint:gradient.linear(luma(0), luma(255)), thickness: 0.5pt, cap:"round"))
+        #if display.gradient {[
+          #line(start: (-0.5em, 0cm), length: 100%, stroke: (paint:gradient.linear(luma(0), luma(255)), thickness: 0.5pt, cap:"round"))
+        ]} else {[
+          #line(start: (-0.5em, 0cm), length: 100%, stroke: (paint:luma(255), thickness: 0.5pt, cap:"round"))
+        ]}
       ]}
       ]),
     footer: context( if here().page() >=2 [
@@ -156,14 +167,8 @@
   )
 
   // font & language
-  set text(
-    font: (
-      "Libertinus Serif",
-      "Fira Sans",
-    ),
-    fallback: true,
-    lang: option.lang
-  )
+  set text(font: (fonts.text), fallback: true, lang: option.lang)
+  show math.equation: set text( font: (fonts.math), fallback: true)
 
   // heading
   show heading: set block(above: 1.2em, below: 1.2em)
@@ -226,6 +231,7 @@
     type:option.type,
     doc: doc,
     date: date,
+    display: display
   )
 
   pagebreak()
