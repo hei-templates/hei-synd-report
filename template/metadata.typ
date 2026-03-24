@@ -1,5 +1,5 @@
-#import "@preview/hei-synd-thesis:0.3.1": *
-#import "@preview/hei-synd-report:0.2.0": *
+#import "@preview/hei-synd-thesis:0.4.0": *
+#import "@preview/hei-synd-report:0.3.0": *
 
 //-------------------------------------
 // Document options

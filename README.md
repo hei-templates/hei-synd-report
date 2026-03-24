@@ -26,7 +26,7 @@ This is the official template for a students report or project or lab report for
 
    ```bash
    # from the typst universe
-   typst init @preview/hei-synd-report:0.2.0
+   typst init @preview/hei-synd-report:0.3.0
    ```
 
 2. Fill in the metadata in the `metadata.typ` file.

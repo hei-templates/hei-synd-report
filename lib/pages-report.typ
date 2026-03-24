@@ -2,7 +2,7 @@
 // Description: Title page for the script template
 // Author     : Silvan Zahno
 //
-#import "@preview/hei-synd-thesis:0.3.1": *
+#import "@preview/hei-synd-thesis:0.4.0": *
 
 #let page-title-report(
   type: none,
