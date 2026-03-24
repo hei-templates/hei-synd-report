@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-03-24
+
+### 🚀 Features
+
+- *(logo)* Add synd-it logo ([31039ca](https://github.com/hei-templates/hei-synd-report/commit/31039caa0afa035b0d68e9e3e22277412c74cb8b) - zas)
+- *(gradient)* Add line gradient option ([7dd77de](https://github.com/hei-templates/hei-synd-report/commit/7dd77de0a4fdc97c47784bdb0ea2069ccb3c35b1) - zas)
+- *(font)* Font options for text, mono and math ([41ea08c](https://github.com/hei-templates/hei-synd-report/commit/41ea08c4d7829b6335073162984429becb6ec6aa) - zas)
+
+### 💼 Other
+
+- *(version)* Update to 0.3.0 and hei-synd-thesis to 0.4.0 ([e0fb89d](https://github.com/hei-templates/hei-synd-report/commit/e0fb89d9ff096320584b5d93f60cb4ee6ed969df) - zas)
+
+### ⚙️ Miscellaneous Tasks
+
+- *(ci)* Remove font install ([54fcc27](https://github.com/hei-templates/hei-synd-report/commit/54fcc277227f3c940c50f25bd8939b92aedf5e3a) - zas)
+
+**Full Changelog**: [0.2.0...0.3.0](https://github.com/hei-templates/hei-synd-report/compare/0.2.0...0.3.0)
+
 ## [0.2.0] - 2026-03-13
 
 ### 🚀 Features
