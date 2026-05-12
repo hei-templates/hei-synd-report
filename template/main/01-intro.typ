@@ -1,5 +1,8 @@
 #import "/metadata.typ": *
-#pagebreak()
+
+#if display.titlepage or tableof.toc or tableof.tof or tableof.tot or tableof.tol or tableof.toe {
+  pagebreak()
+}
 
 = Introduction
 

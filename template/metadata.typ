@@ -79,6 +79,7 @@
 //
 #let display = (
   gradient: false,
+  titlepage: true,
 )
 
 #let tableof = (

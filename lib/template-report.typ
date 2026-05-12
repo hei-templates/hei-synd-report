@@ -47,6 +47,7 @@
   date: datetime.today(),
   display : (
     gradient: false,
+    titlepage: true,
   ),
   tableof : (
     toc: true,
@@ -140,7 +141,7 @@
 
   // header and footer
   set page(
-    header: context(if here().page() >=2 [
+    header: context(if (here().page() >=2 and display.titlepage or here().page() >=1 and display.titlepage == false) [
       #set text(small)
       #table(
         columns: (80%, 20%),
@@ -164,7 +165,7 @@
         ]}
       ]}
       ]),
-    footer: context( if here().page() >=2 [
+    footer: context(if (here().page() >=2 and display.titlepage or here().page() >=1 and display.titlepage == false) [
         #set text(small)
         #line(start: (85%, 0cm), length: 15%, stroke: (paint:gradient.linear(luma(255), luma(0)), thickness: 0.5pt, cap:"round"))
         #enumerating-emails(names:doc.authors.map(a => a.abbr), emails:doc.authors.map(a => a.email)) #if doc.authors.first().abbr != none {[/]} #date.display("[year]") #h(1fr) #context counter(page).display("1 / 1", both: true)
@@ -231,8 +232,9 @@
     date: date,
     display: display
   )
-
-  pagebreak()
+  if display.titlepage {
+    pagebreak()
+  }
   // Table of content
   toc(
     tableof: tableof,
