@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-05-12
+
+### 🚀 Features
+
+- *(display)* Add possibility to enable/disable the titlepage ([5cdafd2](https://github.com/hei-templates/hei-synd-report/commit/5cdafd2148e899ff6ea91f28dbe54c4adc397aec) - zas)
+
+### ⚙️ Miscellaneous Tasks
+
+- *(version)* Bump version to 0.4.0 ([bf67f7c](https://github.com/hei-templates/hei-synd-report/commit/bf67f7c41fafcb78b89ef644b937b009a38c9979) - zas)
+
+**Full Changelog**: [0.3.0...0.4.0](https://github.com/hei-templates/hei-synd-report/compare/0.3.0...0.4.0)
+
 ## [0.3.0] - 2026-03-24
 
 ### 🚀 Features
