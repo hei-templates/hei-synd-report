@@ -7,7 +7,14 @@
 #let report(
   option: (
     lang: "en",
-    type: "draft"
+    type: "draft",
+    watermark: (
+        visible: none,
+        text: "",
+        font: none,
+        size: 160pt,
+        color: hei-pink.transparentize(90%)
+    ),
   ),
   doc: (
     title    : none,
@@ -135,6 +142,24 @@
   doc.keywords          =  doc.at("keywords", default: ("Typst", "Template", "Report"))
   doc.version           =  doc.at("version", default: none)
 
+  if not "watermark" in option {
+      option.watermark = (
+          visible: option.type != "final",
+          text: upper(option.type),
+          font: fonts.text,
+          size: 160pt,
+          color: hei-pink.transparentize(90%),
+      )
+  }
+  option.watermark.visible = option.watermark.at("visible", default: option.type != "final")
+  option.watermark.text = option.watermark.at("text", default: upper(option.type))
+  option.watermark.size = option.watermark.at("size", default: 160pt)
+  option.watermark.font = option.watermark.at("font", default: fonts.text)
+  if option.watermark.font == none {
+      option.watermark.font = fonts.text
+  }
+  option.watermark.color = option.watermark.at("color", default: hei-pink.transparentize(90%))
+
   // basic properties
   set document(author: doc.authors.map(a => if a.name != none {a.name} else {""}), title: doc.title, keywords: doc.keywords, date: date)
   set page(margin: (top:3cm, bottom:3cm, left:3cm, right:2.5cm))
@@ -247,6 +272,15 @@
     ),
     before: <sec:glossary>
   )
+
+  // Watermark
+  let watermark = if option.watermark.visible {
+    place(
+      center + horizon,
+      rotate(-45deg, text(option.watermark.size, font: option.watermark.font, fill: option.watermark.color, weight: "extrabold")[#option.watermark.text])
+    )
+  }
+  set page(background: watermark)
 
   // Main body
   set par(justify: true)
